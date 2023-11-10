@@ -23,6 +23,12 @@ def draw_arrow(
         head_height (float, optional): Defaults to 2.
     """
     arrow = start-end
+
+    # temp_start = start.normalize()
+    # temp_end = end.normalize()
+    # dot = temp_start.x*temp_end.x + temp_start.y*temp_end.y      # Dot product between [x1, y1] and [x2, y2]
+    # det = temp_start.x*temp_end.y - temp_start.y*temp_end.x      # Determinant
+    # angle = math.atan2(det, dot) # radians
     angle = arrow.angle_to(pygame.Vector2(0, -1))# angle diference from the arrow's vector to the up vector
     pygame.draw.line(surface, (255,0,0),start,start+pygame.Vector2(0, -100),3) 
     pygame.draw.line(surface, (0,255,0),start,start+pygame.Vector2(0, 100),3) 
@@ -67,10 +73,10 @@ def draw_arrow(
         pygame.gfxdraw.aapolygon(surface,  body_verts, color)
         pygame.draw.polygon(surface, color, body_verts)
     
-    dot = start.x*end.x + start.y*end.y      # Dot product between [x1, y1] and [x2, y2]
-    det = start.x*end.y - start.y*end.x      # Determinant
-    angle = math.atan2(det, dot) # radians
-    print(angle)
+    # dot = start.x*end.x + start.y*end.y      # Dot product between [x1, y1] and [x2, y2]
+    # det = start.x*end.y - start.y*end.x      # Determinant
+    # angle = math.atan2(det, dot) # radians
+    # print(abs(det), dot, angle*180/math.pi)
 
 pygame.init()
 

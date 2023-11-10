@@ -4,7 +4,7 @@ from assets.scripts.engine.Tleng2 import *
 
 class Visualizer(Scene, GlobalSettings):
     def __init__(self):
-        TlenGame.__init__(self)
+        Scene.__init__(self)
         GlobalSettings.__init__(self)
 
     def on_init(self):
@@ -31,6 +31,6 @@ class Visualizer(Scene, GlobalSettings):
 
 
 if __name__ == '__main__':
-    visualizer = Visualizer()
-    visualizer.on_init()
-    visualizer.run()
+    simul = TlenGame({'main':Visualizer})
+    simul.on_init()
+    simul.run()
