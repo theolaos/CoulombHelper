@@ -6,5 +6,5 @@ Algorithm created using vectors.
 
 If you want to only use the backend, you can copy both files config.py and coulomb.py.
 
-Pygame Visualizer soon... (with the help of my lovely game engine [TLengPy2](https://github.com/theolaos/TLengPy2))
+Pygame Visualizer soon... (with the help of my lovely game engine [TLeng2](https://github.com/tl-ecosystem/tleng))
 
