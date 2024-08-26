@@ -1,10 +1,10 @@
 import pygame
 from math import sqrt
-from config import *
+from src.config import *
 
 
 class Particle:
-    def __init__(self, q, pos : (int,int)):
+    def __init__(self, q, pos : tuple[int,int]):
         self.q = q
         self.pos = pos # X -> Y ->  Z
         self.vecs = []

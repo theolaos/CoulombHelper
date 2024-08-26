@@ -1,5 +1,5 @@
-from config import *
-from coulomb import *
+from src.config import *
+from src.coulomb import *
 
 class Property_visualization(Stat_Property):
     """
