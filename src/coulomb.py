@@ -1,6 +1,47 @@
 import pygame
+
 from math import sqrt
-from src.config import *
+from dataclasses import dataclass, field
+
+from .tleng2 import *
+from .config import *
+
+@dataclass
+class ParticleComp:
+    q: float
+    pos: tuple[float, float]
+    vecs: list[pygame.Vector2] = field(default_factory=list)
+    general_vec: pygame.Vector2 = field(default_factory=lambda: pygame.math.Vector2)
+    self_vec: pygame.Vector2 = field(default_factory=lambda: pygame.math.Vector2)
+    
+    def __post_init__(self) -> None:
+        self.self_vec: pygame.Vector2 = pygame.math.Vector2(self.pos[0], self.pos[1])
+
+
+class CalculateForces(ecs.System):
+    def parameters(self, world: ecs.World) -> None:
+        self.world = world
+        # init type shi
+        self.vec_zero = pygame.Vector2(0,0)
+
+    def update(self) -> None:
+        particles = [particle for e, particle in self.world.single_fast_query(ParticleComp)]
+        Stat_Property.charge_vectors(*particles)
+
+        for particle in particles:
+            particle.general_vec = sum(particle.vecs, start=self.vec_zero)
+
+
+class DrawParticles(ecs.System):
+    def parameters(self, world: ecs.World) -> None:
+        self.world = world
+
+    def update(self) -> None:
+        for e, (particle, renderable) in self.world.fast_query(ParticleComp, RenderableComp):
+            # temp_surface = pygame.surface(10,10)
+            renderable.surface = pygame.surface(10,10)
+            pygame.draw.circle(renderable.surface, "red", particle.pos, 5)
+            renderable.rect = particle.pos
 
 
 class Particle:
@@ -14,7 +55,15 @@ class Particle:
 
 class Stat_Property:
     @staticmethod
-    def law_coulomb(q1 : int|float, q2 : int|float, r : int|float, k = Config.k, F = None, absl:bool=True) -> float:
+    def law_coulomb(
+        q1 : int|float, 
+        q2 : int|float, 
+        r : int|float, 
+        k = Config.k, 
+        F = None, 
+        absl:bool=True
+    ) -> float:
+        
         if q1 != None and q2 != None and r != None and F == None: 
             print_debug( "Solving for F (force, Newtons): ", endl="" )
             if absl:
@@ -52,7 +101,7 @@ class Stat_Property:
             print_debug( "Solving for r (distance, meters): ", endl="" )
             return sqrt( (k* abs(q1)* abs(q2))/F )
         
-        else:                                                   # we know everything
+        else:                                                   # we know everything except the Force
             return Stat_Property.law_coulomb(q1=q1, q2=q2, r=r, k=k, F=F)    
 
 
@@ -83,8 +132,7 @@ class Stat_Property:
     # vectors stuff
 
     @staticmethod
-    def charge_vectors(*charges:Particle, k1:int|None=None)->None:
-        k = k1 if k1 != None else Config.k
+    def charge_vectors(*charges:Particle, k:float=Config.k) -> None:
 
         temp_charges = charges
         secondary_charges = list(charges)

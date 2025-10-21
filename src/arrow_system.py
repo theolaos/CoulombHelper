@@ -1,16 +1,34 @@
-import math
 import pygame
-from pygame import gfxdraw
+import math
+
+from dataclasses import dataclass
+
+from .tleng2 import *
+
+from .coulomb import ParticleComp
+
+@dataclass
+class ArrowComp:
+    color: pygame.Color
+    body_width: int = 2
+    head_width: int = 4
+    head_height: int = 2
+
+class ArrowsComp:
+    color: pygame.Color
+    body_width: int = 2
+    head_width: int = 4
+    head_height: int = 2
+
 
 def draw_arrow(
-        surface: pygame.Surface,
         start: pygame.Vector2,
         end: pygame.Vector2,
         color: pygame.Color,
         body_width: int = 2,
         head_width: int = 4,
         head_height: int = 2,
-    ):
+    ) -> tuple[pygame.Surface, pygame.Vector2, tuple[int,int]]:
     """Draw an arrow between start and end with the arrow head at the end. (No Antialiasing)
     
     Args:
@@ -83,31 +101,37 @@ def draw_arrow(
         pygame.draw.polygon(draw_surface, color, body_verts)
 
     # blit the temporary surface onto the real surface
-    surface.blit(temp_surf, (int(top_left.x), int(top_left.y)))
+    # surface.blit(temp_surf, (int(top_left.x), int(top_left.y)))
 
-pygame.init()
+    return temp_surf, top_left, size
 
-CLOCK = pygame.time.Clock()
-FPS = 100
+class Arrows(ecs.System):
+    def parameters(self, world: ecs.World) -> None:
+        self.world = world
+    
+    def update(self) -> None:
+        for e, (particle, arrow_conf, renderable) in self.world.fast_query(ParticleComp, ArrowsComp, RenderableComp):
+            ...
 
-WIDTH = 1280
-HEIGHT = 720
-RESOLUTION = (WIDTH, HEIGHT)
-SCREEN = pygame.display.set_mode(RESOLUTION)
 
-while True:
-    CLOCK.tick(FPS)
+class Arrow(ecs.System):
+    def parameters(self, world: ecs.World) -> None:
+        self.world = world
+    
+    def update(self) -> None:
+        for e, (particle, arrow, renderable) in self.world.fast_query(ParticleComp, ArrowComp, RenderableComp):
+            start = particle.self_vec
+            
+            end = (particle.self_vec + particle.general_vec)
 
-    for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                exit()
+            color = arrow.color
+            body_width = arrow.body_width
+            head_width = arrow.head_width
+            head_height = arrow.head_height
 
-    SCREEN.fill(pygame.Color("black"))
+            surface, topleft, size = draw_arrow(start, end, color, body_width, head_width, head_height)
+            renderable.surface = surface
+            renderable.rect.topleft = topleft
+            renderable.rect.size = size
 
-    center = pygame.Vector2(WIDTH / 2, HEIGHT / 2)
-    end = pygame.Vector2(pygame.mouse.get_pos())
-    print(end,end=' ')
-    draw_arrow(SCREEN, center, end, (pygame.Color("dodgerblue")), 3, 30, 30)
 
-    pygame.display.flip()

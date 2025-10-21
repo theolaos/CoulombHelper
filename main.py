@@ -1,39 +1,73 @@
 import pygame
+pygame.init()
 
 from src.tleng2 import *
 
-#from assets.scripts.engine.settings import *
+from src.arrow_system import Arrow, Arrows 
+from src.coulomb import CalculateForces, ParticleComp
+
+GlobalSettings.update_bresolution((1280,720))
+RendererMethods.load_displays()
+
+EngineMethods.set_caption("Coulomb Visualizer - with multiple particles")
+
+GlobalSettings._debug = True # it is False by default
+
+world = ecs.World()
+
+world.append_resources(
+    DisplayCanvasComp(
+        (1280,720)
+    )
+)
+
+particle1 = world.spawn(
+    ParticleComp( 0.01*10**-6, (0,4*10**-2))
+)
+particle2 = world.spawn(
+    ParticleComp( 0.01*10**-6, (8*10**-2, 4*10**-2))
+)
+particle3 = world.spawn(
+    ParticleComp( 0.02*10**-6, (4*10**-2, 4*10**-2))
+)
+particle4 = world.spawn(
+    ParticleComp( 0.01*10**-6, (4*10**-2, 0))
+)
+
+scheduler = ecs.Scheduler()
+
+scheduler.add_systems(
+    "Update",
+    CalculateForces(),
+    Arrow(),
+    Arrows()
+)
 
 
-class Visualizer(Scene):
-    def __init__(self):
-        Scene.__init__(self)
+main_scene = ecs.SceneComp(
+    world,
+    scheduler
+)
 
-    def on_init(self):
-        '''
-        Class objects, Entities, 
-        '''
-        self.charges = []
 
-    def handle_events(self):
-        '''
-        the handling of basic events
-        '''
-        for event in pygame.event.get(): #optimazation (i think it can be written better)
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                self.running = False
+def main():
+    vis = App()
 
-    
-    def render(self):     
-        self._win.fill((180,180,255))
-        pygame.display.flip()
-    
-    def update(self):
-        ...
+    vis.use_plugins(
+        tleng_base_plugin
+    )
+
+    vis.load_scenes(
+        start_with="main_scene",
+        main_scene=main_scene
+    )
+
+    vis.run()
+
 
 
 if __name__ == '__main__':
     # simul = TlenGame({'main':Visualizer})
     # simul.on_init()
     # simul.run()
-    ...
+    main()
