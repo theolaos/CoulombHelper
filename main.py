@@ -1,12 +1,9 @@
-import pygame
-pygame.init()
-
 from src.tleng2 import *
 
 from src.arrow_system import Arrow, Arrows 
 from src.coulomb import CalculateForces, ParticleComp
 
-GlobalSettings.update_bresolution((1280,720))
+GlobalSettings.update_resolutions((1280,720), (1280,720))
 RendererMethods.load_displays()
 
 EngineMethods.set_caption("Coulomb Visualizer - with multiple particles")
@@ -20,6 +17,7 @@ world.append_resources(
         (1280,720)
     )
 )
+
 
 particle1 = world.spawn(
     ParticleComp( 0.01*10**-6, (0,4*10**-2))
@@ -53,6 +51,10 @@ main_scene = ecs.SceneComp(
 def main():
     vis = App()
 
+    vis.register_events(
+        *default_events_bundle()
+    )
+
     vis.use_plugins(
         tleng_base_plugin
     )
@@ -65,9 +67,5 @@ def main():
     vis.run()
 
 
-
 if __name__ == '__main__':
-    # simul = TlenGame({'main':Visualizer})
-    # simul.on_init()
-    # simul.run()
     main()

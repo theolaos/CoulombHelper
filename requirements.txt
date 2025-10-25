@@ -1,2 +1,2 @@
 python3 <= 3.11
-pygame <= 2.3
+pygame-ce <= 2.3
