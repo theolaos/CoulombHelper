@@ -39,9 +39,9 @@ class DrawParticles(ecs.System):
     def update(self) -> None:
         for e, (particle, renderable) in self.world.fast_query(ParticleComp, RenderableComp):
             # temp_surface = pygame.surface(10,10)
-            renderable.surface = pygame.surface(10,10)
-            pygame.draw.circle(renderable.surface, "red", particle.pos, 5)
-            renderable.rect = particle.pos
+            renderable.surface = pygame.Surface((10,10))
+            pygame.draw.circle(renderable.surface, (255,0,0), (5,5), 5)
+            renderable.rect.topleft = particle.pos
 
 
 class Particle:
