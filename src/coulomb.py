@@ -32,6 +32,20 @@ class CalculateForces(ecs.System):
             particle.general_vec = sum(particle.vecs, start=self.vec_zero)
 
 
+class InitDrawParticles(ecs.System):
+    def parameters(self, world: ecs.World) -> None:
+        self.world = world
+
+    def update(self) -> None:
+        for e, (particle, renderable) in self.world.fast_query(ParticleComp, RenderableComp):
+            # temp_surface = pygame.surface(10,10)
+            renderable.surface = pygame.Surface((10,10))
+            pygame.draw.circle(renderable.surface, (255,0,0), (5,5), 5)
+            renderable.rect.topleft = particle.pos
+            
+            debug_print(f'Initializing entity: {e}', tags=['Entities'])
+
+
 class DrawParticles(ecs.System):
     def parameters(self, world: ecs.World) -> None:
         self.world = world
@@ -42,6 +56,7 @@ class DrawParticles(ecs.System):
             renderable.surface = pygame.Surface((10,10))
             pygame.draw.circle(renderable.surface, (255,0,0), (5,5), 5)
             renderable.rect.topleft = particle.pos
+            
 
 
 class Particle:

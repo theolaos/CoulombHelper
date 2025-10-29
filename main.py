@@ -3,9 +3,9 @@ import pygame
 from src.tleng2 import *
 
 from src.arrow_system import Arrow, Arrows 
-from src.coulomb import CalculateForces, ParticleComp, DrawParticles
+from src.coulomb import CalculateForces, ParticleComp, InitDrawParticles
 
-GlobalSettings.update_resolutions((1280,720), (1280,720))
+# GlobalSettings.update_resolutions((1280,720), (1280,720))
 RendererMethods.load_displays()
 
 EngineMethods.set_caption("Coulomb Visualizer - with multiple particles")
@@ -22,43 +22,33 @@ world.append_resources(
 )
 
 
-
-
 particle1 = world.spawn(
-    ParticleComp( 0.01*10**-6, (10,5)),
-    RenderableComp(
-        pygame.Surface((10,10)),
-        pygame.FRect(0,0,10,10)
-    )
+    ParticleComp(0.01*10**-6, (10,5)),
+    RenderableComp()
 )
 particle2 = world.spawn(
-    ParticleComp( 0.01*10**-6, (-10, -10)),
-RenderableComp(
-    pygame.Surface((10,10)),
-    pygame.FRect(0,0,10,10)
-)
+    ParticleComp(0.01*10**-6, (100, 100)),
+    RenderableComp()
 )
 particle3 = world.spawn(
-    ParticleComp( 0.02*10**-6, (40, 40)),
-RenderableComp(
-    pygame.Surface((10,10)),
-    pygame.FRect(0,0,10,10)
-)
+    ParticleComp(0.02*10**-6, (40, 40)),
+    RenderableComp()
 )
 particle4 = world.spawn(
-    ParticleComp( 0.01*10**-6, (40, 0)),
-RenderableComp(
-    pygame.Surface((10,10)),
-    pygame.FRect(0,0,10,10)
-)
+    ParticleComp(0.01*10**-6, (40, 0)),
+    RenderableComp()
 )
 
 scheduler = ecs.Scheduler()
 
+scheduler.add_init_systems(
+    InitDrawParticles()
+)
+
 scheduler.add_systems(
     "Update",
     CalculateForces(),
-    DrawParticles(),
+    # DrawParticles(),
     Arrow(),
     Arrows()
 )
