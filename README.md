@@ -1,10 +1,9 @@
 # CoulombHelper
-A little fun helper for the law of coulomb made in python
+A small algorithm that helps visualize and calculate for you the Law of Coulomb in real time!
 
-Work with the point charges that affect each other.
-Algorithm created using vectors.
+Work with multiple point charges, and how they affect each other in space.
 
-If you want to only use the backend, you can copy both files config.py and coulomb.py.
+Move the point charges around, give different data, inspect the results.
 
-Pygame Visualizer soon... (with the help of my lovely game engine [TLeng2](https://github.com/tl-ecosystem/tleng))
+Particle Visualizer is WIP (with the help of my lovely game engine [tleng](https://github.com/tl-ecosystem/tleng))
 
