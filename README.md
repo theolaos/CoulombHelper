@@ -9,10 +9,10 @@ Particle Visualizer is WIP (with the help of my lovely game engine [tleng](https
 
 ## TODO list
 
-[ ] : Make the arrows work
+- [ ] : Make the arrows work
 
-[ ] : Create an actual cartesian
+- [ ] : Create an actual cartesian
 
-[ ] : Always zoom in close to the particles
+- [ ] : Always zoom in close to the particles
 
-[ ] : Ability to move around
+- [ ] : Ability to move around
