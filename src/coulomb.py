@@ -37,26 +37,15 @@ class InitDrawParticles(ecs.System):
         self.world = world
 
     def update(self) -> None:
-        for e, (particle, renderable) in self.world.fast_query(ParticleComp, RenderableComp):
-            # temp_surface = pygame.surface(10,10)
+        for e, (particle, renderables) in self.world.fast_query(ParticleComp, RenderablesComp):
+            renderable = RenderableComp()
+            
             renderable.surface = pygame.Surface((10,10))
             pygame.draw.circle(renderable.surface, (255,0,0), (5,5), 5)
             renderable.rect.topleft = particle.pos
-            
+
+            renderables.renderable.append(renderable)
             debug_print(f'Initializing entity: {e}', tags=['Entities'])
-
-
-class DrawParticles(ecs.System):
-    def parameters(self, world: ecs.World) -> None:
-        self.world = world
-
-    def update(self) -> None:
-        for e, (particle, renderable) in self.world.fast_query(ParticleComp, RenderableComp):
-            # temp_surface = pygame.surface(10,10)
-            renderable.surface = pygame.Surface((10,10))
-            pygame.draw.circle(renderable.surface, (255,0,0), (5,5), 5)
-            renderable.rect.topleft = particle.pos
-            
 
 
 class Particle:

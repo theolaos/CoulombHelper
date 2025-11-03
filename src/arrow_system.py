@@ -105,21 +105,33 @@ def draw_arrow(
 
     return temp_surf, top_left, size
 
-class Arrows(ecs.System):
+
+
+
+class DrawArrows(ecs.System):
     def parameters(self, world: ecs.World) -> None:
         self.world = world
     
     def update(self) -> None:
-        for e, (particle, arrow_conf, renderable) in self.world.fast_query(ParticleComp, ArrowsComp, RenderableComp):
+        for e, (particle, arrow_conf, renderable) in self.world.fast_query(ParticleComp, ArrowsComp, RenderablesComp):
             ...
 
 
-class Arrow(ecs.System):
+class InitDrawArrow(ecs.System):
+    def parameters(self, world: ecs.World) -> None:
+        self.world = world
+
+    def update(self) -> None:
+        for e, rsc in self.world.query(RenderablesComp, has=(ArrowComp, ParticleComp)):
+            ...
+
+
+class DrawArrow(ecs.System):
     def parameters(self, world: ecs.World) -> None:
         self.world = world
     
     def update(self) -> None:
-        for e, (particle, arrow, renderable) in self.world.fast_query(ParticleComp, ArrowComp, RenderableComp):
+        for e, (particle, arrow, rsc) in self.world.fast_query(ParticleComp, ArrowComp, RenderablesComp):
             start = particle.self_vec
             
             end = (particle.self_vec + particle.general_vec)
@@ -130,8 +142,11 @@ class Arrow(ecs.System):
             head_height = arrow.head_height
 
             surface, topleft, size = draw_arrow(start, end, color, body_width, head_width, head_height)
-            renderable.surface = surface
-            renderable.rect.topleft = topleft
-            renderable.rect.size = size
-
+            rc = RenderableComp(
+                surface
+            )
+            rc.rect = topleft
+            rc.size = size
+            
+            rsc.renderable[1].append(rc)
 

@@ -7,3 +7,9 @@ Move the point charges around, give different data, inspect the results.
 
 Particle Visualizer is WIP (with the help of my lovely game engine [tleng](https://github.com/tl-ecosystem/tleng))
 
+## TODO list
+
+[ ] : Make the arrows work
+[ ] : Create an actual cartesian
+[ ] : Always zoom in close to the particles
+[ ] : Ability to move around
