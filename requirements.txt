@@ -1,3 +1,4 @@
 # python3 <= 3.11
 pygame-ce <= 2.3
 modenrngl
+pytest

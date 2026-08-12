@@ -6,9 +6,9 @@ Work with multiple point charges, and how they affect each other in space.
 
 Move the point charges around, give different data, inspect the results.
 
-Particle Visualizer is WIP (with the help of my game engine [tleng](https://github.com/tl-ecosystem/tleng))
+The visual playground is still in development. The UI part of this application is reliant on
+my [tleng2](https://github.com/tl-ecosystem/tleng) Game Engine, with a UI plugin for the engine.
 
-# Installation
 
 ## How to download:
 
@@ -79,6 +79,6 @@ Go to releases!
 </details>
 
 
-# Contribute
+## Contribute
 
 You are free to contribute in any way you want. Just create a `pull request` and I will review it.
