@@ -1,6 +1,6 @@
 # CoulombHelper: Electronic Physics simulator
 
-A small algorithm that helps visualize and calculate for you the Law of Coulomb in real time!
+A simulation centered application that helps you visualize and calculate the Law of Coulomb in real time!
 
 Work with multiple point charges, and how they affect each other in space.
 
@@ -81,4 +81,11 @@ Go to releases!
 
 ## Contribute
 
-You are free to contribute in any way you want. Just create a `pull request` and I will review it.
+You are free to contribute in any way you want. That is:
+- If you found a bug, create one!
+- Any Enhancement you think is going to result in a better experience!
+    - Like UI changes,
+    - Background optimizations and etc!
+- Code refactors and new features
+
+Just create a `pull request` which I will review and merge or an `issue` in which we can talk about it.
