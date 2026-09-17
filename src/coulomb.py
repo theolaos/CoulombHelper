@@ -20,48 +20,8 @@ from math import sqrt
 from dataclasses import dataclass, field
 
 from .tleng2 import *
-from .config import *
-
-@dataclass
-class ParticleComp:
-    q: float
-    pos: tuple[float, float]
-    vecs: list[pygame.Vector2] = field(default_factory=list)
-    general_vec: pygame.Vector2 = field(default_factory=lambda: pygame.math.Vector2)
-    self_vec: pygame.Vector2 = field(default_factory=lambda: pygame.math.Vector2)
-    
-    def __post_init__(self) -> None:
-        self.self_vec: pygame.Vector2 = pygame.math.Vector2(self.pos[0], self.pos[1])
-
-
-class CalculateForces(ecs.System):
-    def parameters(self, world: ecs.World) -> None:
-        self.world = world
-        # init type shi
-        self.vec_zero = pygame.Vector2(0,0)
-
-    def update(self) -> None:
-        particles = [particle for e, particle in self.world.single_fast_query(ParticleComp)]
-        Stat_Property.charge_vectors(*particles)
-
-        for particle in particles:
-            particle.general_vec = sum(particle.vecs, start=self.vec_zero)
-
-
-class InitDrawParticles(ecs.System):
-    def parameters(self, world: ecs.World) -> None:
-        self.world = world
-
-    def update(self) -> None:
-        for e, (particle, renderables) in self.world.fast_query(ParticleComp, RenderablesComp):
-            renderable = RenderableComp()
-            
-            renderable.surface = pygame.Surface((10,10))
-            pygame.draw.circle(renderable.surface, (255,0,0), (5,5), 5)
-            renderable.rect.topleft = particle.pos
-
-            renderables.renderable.append(renderable)
-            debug_print(f'Initializing entity: {e}', tags=['Entities'])
+from .constants import *
+from .log import *
 
 
 class Particle:
@@ -73,19 +33,17 @@ class Particle:
         self.self_vec = pygame.math.Vector2(self.pos[0], self.pos[1])
 
 
-class Stat_Property:
+class StatProperty:
     @staticmethod
     def law_coulomb(
         q1 : int|float, 
         q2 : int|float, 
         r : int|float, 
-        k = Config.k, 
         F = None, 
         absl:bool=True
     ) -> float:
-        
         if q1 != None and q2 != None and r != None and F == None: 
-            print_debug( "Solving for F (force, Newtons): ", endl="" )
+            log( "Solving for F (force, Newtons): ")
             if absl:
                 return ( k* abs(q1)* abs(q2) )/r**2 
             else:
@@ -110,15 +68,15 @@ class Stat_Property:
         if F != None and len(anon_charges) > 0 and r != None: # we know everything but the charges
             if len(anon_charges) == 2:
                 q = 2
-                print_debug( "Assuming that both charges are equal", endl="" )
+                log("Assuming that both charges are equal")
             else:
                 q = known_charges[0]
             
-            print_debug( f"Solving for q (charge, Coulomb): ", endl="" )
+            log(f"Solving for q (charge, Coulomb): ")
             return (F*r**2)/(q*k)
 
         elif F != None and r == None and len(anon_charges) == 0: # we know everything but the distance
-            print_debug( "Solving for r (distance, meters): ", endl="" )
+            log( "Solving for r (distance, meters): ")
             return sqrt( (k* abs(q1)* abs(q2))/F )
         
         else:                                                   # we know everything except the Force
@@ -171,11 +129,11 @@ class Stat_Property:
                     charge1.vecs += [new_vec1]
                     charge2.vecs += [new_vec2]
 
-                    print_debug(f"vector scalar: {d} \n" +
+                    log(f"vector scalar: {d} \n" +
                                 f"distance (r): {r}\n" +
                                 f"force (f): {F}\n"+
                                 f"temporal vector: {temp_vec}")
-                    print_debug(new_vec1,new_vec2)
+                    log(new_vec1,new_vec2)
 
             secondary_charges.pop(0)
 
@@ -185,7 +143,7 @@ class Stat_Property:
         temp_vec = pygame.math.Vector2(0,0)
         for vec in charge.vecs:
             temp_vec += vec
-        print_debug(temp_vec)
+        log(temp_vec)
         return temp_vec
 
     @staticmethod
