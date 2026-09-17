@@ -14,7 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#CONFIG FILE FOR THE COULOMB HELPER
-class Config:
-    k: float = 8.98755*10**9
-    debug: bool = False
+k: float = 8.98755*10**9
+
+milli: float = 10**(-3)
+micro: float = 10**(-6)
+nano: float = 10**(-9)
