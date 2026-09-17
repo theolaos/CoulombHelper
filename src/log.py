@@ -24,7 +24,7 @@ from typing import Optional as _Optional
 
 class Info:
     PATH: str = ""
-    LOG_FILE_NAME_EXT: str = "transpiler.log"
+    LOG_FILE_NAME_EXT: str = "app.log"
     DEFAULT_OUTPUT: _Literal["both", "file", "print"] = "file"  # "both", "file", "print"
     
 
