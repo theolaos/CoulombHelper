@@ -25,7 +25,7 @@ from .log import *
 
 
 class Particle:
-    def __init__(self, q, pos : tuple[int,int]):
+    def __init__(self, q, pos: tuple[int,int]):
         self.q = q
         self.pos = pos # X -> Y ->  Z
         self.vecs = []
@@ -36,11 +36,11 @@ class Particle:
 class StatProperty:
     @staticmethod
     def law_coulomb(
-        q1 : int|float, 
-        q2 : int|float, 
-        r : int|float, 
+        q1: int | float, 
+        q2: int | float, 
+        r: int | float, 
         F = None, 
-        absl:bool=True
+        absl: bool = True
     ) -> float:
         if q1 != None and q2 != None and r != None and F == None: 
             log( "Solving for F (force, Newtons): ")
@@ -54,8 +54,14 @@ class StatProperty:
                             f"->{q1, q2 , r , F }\n" +
                              "->q1 != None and q2 != None and r != None and F == None")
 
+
     @staticmethod
-    def possibilities_law_coulomb(q1 : int|float, q2 : int|float, r : int|float, k = Config.k, F = None) -> float:
+    def possibilities_law_coulomb(
+            q1: int|float, 
+            q2: int|float, 
+            r : int|float,  
+            F = None
+        ) -> float:
         anon_charges = []
         known_charges = []
 
@@ -110,8 +116,7 @@ class StatProperty:
     # vectors stuff
 
     @staticmethod
-    def charge_vectors(*charges:Particle, k:float=Config.k) -> None:
-
+    def charge_vectors(*charges:Particle) -> None:
         temp_charges = charges
         secondary_charges = list(charges)
         for charge1 in temp_charges:
@@ -146,6 +151,7 @@ class StatProperty:
         log(temp_vec)
         return temp_vec
 
+
     @staticmethod
     def get_vectors(*charges:Particle, original_vec:bool=True):
         """
@@ -159,6 +165,7 @@ class StatProperty:
                 temp_vecs += [Stat_Property.general_vector(charge)]
         return temp_vecs
     
+
     @staticmethod
     def return_vectors_length(list_vecs):
         temp_list = []
