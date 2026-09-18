@@ -14,16 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import pygame
+
+from math import sqrt
+
+from ..tleng2 import *
+
+from ..components.particle import ParticleComp
+from ..coulomb import StatProperty
 
 class CalculateForces(ecs.System):
     def parameters(self, world: ecs.World) -> None:
         self.world = world
-        # init type shi
+
         self.vec_zero = pygame.Vector2(0,0)
 
     def update(self) -> None:
         particles = [particle for e, particle in self.world.single_fast_query(ParticleComp)]
-        Stat_Property.charge_vectors(*particles)
+        StatProperty.charge_vectors(*particles)
 
         for particle in particles:
             particle.general_vec = sum(particle.vecs, start=self.vec_zero)
@@ -39,7 +47,7 @@ class InitDrawParticles(ecs.System):
             
             renderable.surface = pygame.Surface((10,10))
             pygame.draw.circle(renderable.surface, (255,0,0), (5,5), 5)
-            renderable.rect.topleft = particle.pos
+            renderable.rect.center = particle.pos
 
             renderables.renderable.append(renderable)
             log(f'Initializing entity: {e}', tags=['Entities'])
