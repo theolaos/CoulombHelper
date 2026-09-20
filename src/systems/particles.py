@@ -18,10 +18,13 @@ import pygame
 
 from math import sqrt
 
+from ..log import *
+
 from ..tleng2 import *
 
-from ..components.particle import ParticleComp
-from ..coulomb import StatProperty
+from ..components import ParticleComp, ArrowComp
+from ..coulomb import CoulombCalc
+
 
 class CalculateForces(ecs.System):
     def parameters(self, world: ecs.World) -> None:
@@ -30,11 +33,20 @@ class CalculateForces(ecs.System):
         self.vec_zero = pygame.Vector2(0,0)
 
     def update(self) -> None:
-        particles = [particle for e, particle in self.world.single_fast_query(ParticleComp)]
-        StatProperty.charge_vectors(*particles)
+        ent_comp = self.world.single_fast_query(ParticleComp)
+        particles = [particle for e, particle in ent_comp]
+        CoulombCalc.charge_vectors(*particles)
 
-        for particle in particles:
+        # I hope this doesn't bite me in the butt
+        for e, particle in ent_comp:
             particle.general_vec = sum(particle.vecs, start=self.vec_zero)
+
+            if not self.world.has_component(e, ArrowComp):
+                self.world.add_component(e, ArrowComp(particle.self_vec, particle.general_vec, pygame.Color(0,0,255)))
+            else:
+                arrow = self.world.get_component(e, ArrowComp)
+                arrow.vec_pos = particle.self_vec
+                arrow.vec_point_to = particle.general_vec
 
 
 class InitDrawParticles(ecs.System):

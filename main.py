@@ -1,9 +1,17 @@
 import pygame
 
 from src.tleng2 import *
+from src.log import *
 
-from src.arrow_system import DrawArrow, DrawArrows 
-from src.coulomb import CalculateForces, ParticleComp, InitDrawParticles
+from src.components import *
+from src.systems import *
+
+from src.coulomb import CoulombCalc, ParticleCalc
+
+from src.constants import *
+
+
+flush_log_file()
 
 RendererMethods.load_displays()
 
@@ -22,19 +30,22 @@ world.append_resources(
 
 
 particle1 = world.spawn(
-    ParticleComp(0.01*10**-6, (10,5)),
+    ParticleComp(0.01*micro, (100,120)),
     RenderablesComp()
 )
+
 particle2 = world.spawn(
-    ParticleComp(0.01*10**-6, (100, 100)),
+    ParticleComp(0.01*micro, (100, 100)),
     RenderablesComp()
 )
+
 particle3 = world.spawn(
-    ParticleComp(0.02*10**-6, (40, 40)),
+    ParticleComp(0.02*micro, (40, 40)),
     RenderablesComp()
 )
+
 particle4 = world.spawn(
-    ParticleComp(0.01*10**-6, (40, 0)),
+    ParticleComp(0.01*micro, (40, 20)),
     RenderablesComp()
 )
 
@@ -44,16 +55,13 @@ scheduler = ecs.Scheduler()
 # 0: Circle
 # 1: Arrow
 scheduler.add_init_systems(
-    InitDrawParticles()
-    
+    InitDrawParticles(),
+    CalculateForces(),
+    DrawArrow()
 )
 
 scheduler.add_systems(
     "Update",
-    CalculateForces(),
-    # DrawParticles(),
-    DrawArrow(),
-    DrawArrows()
 )
 
 
@@ -64,22 +72,22 @@ main_scene = ecs.SceneComp(
 
 
 def main():
-    vis = App()
+    sim = App()
 
-    vis.register_events(
+    sim.register_events(
         *events.default_events_bundle()
     )
 
-    vis.use_plugins(
+    sim.use_plugins(
         tleng_base_plugin
     )
 
-    vis.load_scenes(
+    sim.load_scenes(
         start_with="main_scene",
         main_scene=main_scene
     )
 
-    vis.run()
+    sim.run()
 
 
 if __name__ == '__main__':

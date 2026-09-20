@@ -17,24 +17,40 @@
 import pygame
 import math
 
+from pygame import gfxdraw
 from dataclasses import dataclass
 
-from .tleng2 import *
+from ..tleng2 import *
 
-from .coulomb import ParticleComp
+from ..components import ParticleComp, ArrowComp
 
-@dataclass
-class ArrowComp:
-    color: pygame.Color
-    body_width: int = 2
-    head_width: int = 4
-    head_height: int = 2
 
-class ArrowsComp:
-    color: pygame.Color
-    body_width: int = 2
-    head_width: int = 4
-    head_height: int = 2
+class DrawArrow(ecs.System):
+    def parameters(self, world: ecs.World) -> None:
+        self.world = world
+    
+
+    def update(self) -> None:
+        for e, (arrow, rsc) in self.world.fast_query(ArrowComp, RenderablesComp):
+            start = arrow.vec_pos
+            
+            end = start + arrow.vec_point_to*10**10
+
+            color = arrow.color
+            body_width = arrow.body_width
+            head_width = arrow.head_width
+            head_height = arrow.head_height
+
+            surface, topleft, size = draw_arrow(start, end, color, body_width, head_width, head_height)
+            rc = RenderableComp(
+                surface
+            )
+
+            print(topleft, topleft.x, topleft.y, type(topleft))
+            rc.rect = pygame.FRect(topleft, size)
+            rc.size = size
+            
+            rsc.renderable.append(rc)
 
 
 def draw_arrow(
@@ -120,49 +136,4 @@ def draw_arrow(
     # surface.blit(temp_surf, (int(top_left.x), int(top_left.y)))
 
     return temp_surf, top_left, size
-
-
-
-
-class DrawArrows(ecs.System):
-    def parameters(self, world: ecs.World) -> None:
-        self.world = world
-    
-    def update(self) -> None:
-        for e, (particle, arrow_conf, renderable) in self.world.fast_query(ParticleComp, ArrowsComp, RenderablesComp):
-            ...
-
-
-class InitDrawArrow(ecs.System):
-    def parameters(self, world: ecs.World) -> None:
-        self.world = world
-
-    def update(self) -> None:
-        for e, rsc in self.world.query(RenderablesComp, has=(ArrowComp, ParticleComp)):
-            ...
-
-
-class DrawArrow(ecs.System):
-    def parameters(self, world: ecs.World) -> None:
-        self.world = world
-    
-    def update(self) -> None:
-        for e, (particle, arrow, rsc) in self.world.fast_query(ParticleComp, ArrowComp, RenderablesComp):
-            start = particle.self_vec
-            
-            end = (particle.self_vec + particle.general_vec)
-
-            color = arrow.color
-            body_width = arrow.body_width
-            head_width = arrow.head_width
-            head_height = arrow.head_height
-
-            surface, topleft, size = draw_arrow(start, end, color, body_width, head_width, head_height)
-            rc = RenderableComp(
-                surface
-            )
-            rc.rect = topleft
-            rc.size = size
-            
-            rsc.renderable[1].append(rc)
 
