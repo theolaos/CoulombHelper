@@ -23,17 +23,61 @@ from .tleng2 import *
 from .constants import *
 from .log import *
 
-
-class Particle:
-    def __init__(self, q, pos: tuple[int,int]):
-        self.q = q
-        self.pos = pos # X -> Y ->  Z
-        self.vecs = []
-        self.general_vec = pygame.math.Vector2(0, 0)
-        self.self_vec = pygame.math.Vector2(self.pos[0], self.pos[1])
+from .components import ParticleComp
 
 
-class StatProperty:
+class ParticleCalc:
+    @staticmethod
+    def distance_calc1(partcl1: ParticleComp, partcl2: ParticleComp) -> float:
+        """One dimansion"""
+        return partcl2.pos[0] - partcl1.pos[0]
+
+
+    @staticmethod
+    def distance_calc2(partcl1: ParticleComp, partcl2: ParticleComp) -> float:
+        """Two dimensions"""
+        return sqrt( (partcl2.pos[0] - partcl1.pos[0])**2 + (partcl2.pos[1] - partcl1.pos[1])**2 )
+
+
+    @staticmethod
+    def distance_calc3(partcl1: ParticleComp, partcl2: ParticleComp) -> float:
+        """Three dimensions"""
+        return sqrt( (partcl2.pos[0] - partcl1.pos[0])**2 + (partcl2.pos[1] - partcl1.pos[1])**2 + (partcl2.pos[2] - partcl1.pos[2])**2 )
+
+
+    @staticmethod
+    def general_vector(charge: ParticleComp)->pygame.math.Vector2:
+        temp_vec = pygame.math.Vector2(0,0)
+        for vec in charge.vecs:
+            temp_vec += vec
+        log(temp_vec)
+        return temp_vec
+
+
+    @staticmethod
+    def get_vectors(*charges: ParticleComp, original_vec: bool = True):
+        """
+        Returns every vector with the added self vector.
+        """
+        temp_vecs = []
+        for charge in charges:
+            if original_vec:
+                temp_vecs += [ParticleCalc.general_vector(charge)+charge.self_vec] 
+            else:
+                temp_vecs += [ParticleCalc.general_vector(charge)]
+        return temp_vecs
+    
+
+    @staticmethod
+    def return_vectors_length(list_vecs):
+        temp_list = []
+        for vec in list_vecs:
+            temp_list += [vec.length()]
+        return temp_list
+
+
+
+class CoulombCalc:
     @staticmethod
     def law_coulomb(
         q1: int | float, 
@@ -42,6 +86,7 @@ class StatProperty:
         F = None, 
         absl: bool = True
     ) -> float:
+        print("F", F)
         if q1 != None and q2 != None and r != None and F == None: 
             log( "Solving for F (force, Newtons): ")
             if absl:
@@ -86,44 +131,20 @@ class StatProperty:
             return sqrt( (k* abs(q1)* abs(q2))/F )
         
         else:                                                   # we know everything except the Force
-            return Stat_Property.law_coulomb(q1=q1, q2=q2, r=r, k=k, F=F)    
+            return CoulombCalc.law_coulomb(q1=q1, q2=q2, r=r, k=k, F=F)    
 
 
     @staticmethod
-    def choose_dist_calc(partcl1:Particle, partcl2:Particle) -> float:
-        if len(partcl1.pos) > len(partcl2.pos) or len(partcl1.pos) < len(partcl2.pos):
-            pass
-        else:
-            pass
-
-    @staticmethod
-    def distance_calc1(partcl1:Particle, partcl2:Particle) -> float:
-        """One dimansion"""
-        return partcl2.pos[0] - partcl1.pos[0]
-
-
-    @staticmethod
-    def distance_calc2(partcl1:Particle, partcl2:Particle) -> float:
-        """Two dimensions"""
-        return sqrt( (partcl2.pos[0] - partcl1.pos[0])**2 + (partcl2.pos[1] - partcl1.pos[1])**2 )
-
-
-    @staticmethod
-    def distance_calc3(partcl1:Particle, partcl2:Particle) -> float:
-        """Three dimensions"""
-        return sqrt( (partcl2.pos[0] - partcl1.pos[0])**2 + (partcl2.pos[1] - partcl1.pos[1])**2 + (partcl2.pos[2] - partcl1.pos[2])**2 )
-    
-    # vectors stuff
-
-    @staticmethod
-    def charge_vectors(*charges:Particle) -> None:
+    def charge_vectors(*charges: ParticleComp) -> None:
         temp_charges = charges
         secondary_charges = list(charges)
         for charge1 in temp_charges:
             for charge2 in temp_charges:
                 if charge1 != charge2:
-                    r = Stat_Property.distance_calc2(charge1,charge2) # optimization, same thing *
-                    F = Stat_Property.law_coulomb( charge1.q, charge2.q, r, k ,absl=False)
+                    r = ParticleCalc.distance_calc2(charge1,charge2) # optimization, same thing *
+                    print("charge 1:", charge1)
+                    print("charge 2:", charge2)
+                    F = CoulombCalc.law_coulomb( charge1.q, charge2.q, r, absl=False)
                     # charge1 end of the vector charge 2 the start
                     temp_vec = charge1.self_vec - charge2.self_vec
                     # vector scalars? (idk)
@@ -141,35 +162,3 @@ class StatProperty:
                     log(new_vec1,new_vec2)
 
             secondary_charges.pop(0)
-
-    
-    @staticmethod
-    def general_vector(charge:Particle)->pygame.math.Vector2:
-        temp_vec = pygame.math.Vector2(0,0)
-        for vec in charge.vecs:
-            temp_vec += vec
-        log(temp_vec)
-        return temp_vec
-
-
-    @staticmethod
-    def get_vectors(*charges:Particle, original_vec:bool=True):
-        """
-        Returns every vector with the added self vector.
-        """
-        temp_vecs = []
-        for charge in charges:
-            if original_vec:
-                temp_vecs += [Stat_Property.general_vector(charge)+charge.self_vec] 
-            else:
-                temp_vecs += [Stat_Property.general_vector(charge)]
-        return temp_vecs
-    
-
-    @staticmethod
-    def return_vectors_length(list_vecs):
-        temp_list = []
-        for vec in list_vecs:
-            temp_list += [vec.length()]
-        return temp_list
-

@@ -96,10 +96,12 @@ def draw_arrow(
             body_verts[i] += translation
             body_verts[i] += shifted_start
 
+        print("Ran lol")
         pygame.gfxdraw.aapolygon(draw_surface, body_verts, color)
         pygame.draw.polygon(draw_surface, color, body_verts)
 
-    # blit the temporary surface onto the real surface
+    
+    print(temp_surf.get_width(), temp_surf.get_height())
     surface.blit(temp_surf, (int(top_left.x), int(top_left.y)))
 
 pygame.init()
