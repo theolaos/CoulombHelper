@@ -14,10 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from .arrows import DrawArrows
+from .arrows import DrawArrow
 from .particles import CalculateForces, InitDrawParticles
 
 __all__ = [
-    "DrawArrows",
+    "DrawArrow",
     "CalculateForces", "InitDrawParticles",
 ]
