@@ -23,9 +23,9 @@ class ArrowComp:
     vec_pos: pygame.Vector2
     vec_point_to: pygame.Vector2
     color: pygame.Color
-    body_width: int = 2
-    head_width: int = 4
-    head_height: int = 2
+    body_width: int = 3
+    head_width: int = 15
+    head_height: int = 15
 
 @dataclass
 class ArrowsComp:

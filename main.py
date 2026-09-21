@@ -30,7 +30,7 @@ world.append_resources(
 
 
 particle1 = world.spawn(
-    ParticleComp(0.01*micro, (100,120)),
+    ParticleComp(1*micro, (200,320)),
     RenderablesComp()
 )
 

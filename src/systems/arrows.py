@@ -34,7 +34,7 @@ class DrawArrow(ecs.System):
         for e, (arrow, rsc) in self.world.fast_query(ArrowComp, RenderablesComp):
             start = arrow.vec_pos
             
-            end = start + arrow.vec_point_to*10**10
+            end = start + (arrow.vec_point_to/arrow.vec_point_to.length())*100
 
             color = arrow.color
             body_width = arrow.body_width
